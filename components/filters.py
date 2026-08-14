@@ -74,7 +74,7 @@ def barra_lateral(modelo: ModeloARCO) -> Seleccion:
         f"**{len(unidades)}** de {len(activas)} unidades seleccionadas · "
         f"corte {modelo.periodo_label}"
     )
-    if st.sidebar.button("Recargar fuentes", use_container_width=True):
+    if st.sidebar.button("Recargar fuentes", width="stretch"):
         st.cache_data.clear()
         st.rerun()
 
