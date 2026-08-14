@@ -34,7 +34,7 @@ def rejilla_kpis(tarjetas: list[str], columnas: int = 4) -> None:
     cols = st.columns(columnas, gap="small")
     for i, html in enumerate(tarjetas):
         with cols[i % columnas]:
-            st.markdown(html, unsafe_allow_html=True)
+            st.html(html)
 
 
 def tarjetas_financieras(kpis: dict, comparativo: str = "ly") -> list[str]:
@@ -82,13 +82,12 @@ def bloque_alertas(alertas: pd.DataFrame, maximo: int = 8) -> None:
         st.success("Sin alertas activas para la selección vigente.")
         return
     for _, a in alertas.head(maximo).iterrows():
-        st.markdown(
+        st.html(
             f"""<div class='alert-row {a["severity"]}'>
                   <div class='meta'>{config.SEVERIDAD_LABEL[a["severity"]]} ·
                   {a["kpi"]} · {a["plaza"]}</div>
                   <div class='msg'>{a["message"]}</div>
                 </div>""",
-            unsafe_allow_html=True,
         )
 
 
@@ -97,10 +96,9 @@ def bloque_hallazgos(hallazgos: list[dict]) -> None:
         st.info("No se identificaron hallazgos relevantes con los filtros actuales.")
         return
     for i, h in enumerate(hallazgos, start=1):
-        st.markdown(
+        st.html(
             f"""<div class='finding {h["tono"]}'>
                   <div class='rank'>{i}</div>
                   <div class='txt'>{h["texto"]}</div>
                 </div>""",
-            unsafe_allow_html=True,
         )
