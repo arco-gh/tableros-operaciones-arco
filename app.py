@@ -169,7 +169,7 @@ with tab_fin:
     with col_a:
         st.markdown("**Ingresos, gastos y UAIIDA — Real vs presupuesto vs año anterior**")
         st.plotly_chart(charts.comparativo_financiero(kpis, PERIODO),
-                        use_container_width=True, key="ch_fin_comparativo")
+                        width="stretch", key="ch_fin_comparativo")
     with col_b:
         st.markdown("**Cumplimiento del portafolio**")
         filas = []
@@ -208,7 +208,7 @@ with tab_fin:
             f"**{concepto} — desviación total: "
             f"{metrics.format_millions(total_desv)} vs {referencia.lower()}**")
         st.plotly_chart(charts.contribucion_desviacion(contrib),
-                        use_container_width=True, key="ch_contribucion")
+                        width="stretch", key="ch_contribucion")
     with c2:
         st.markdown("**Detalle de la aportación de cada plaza**")
         detalle = tables.tabla_desviaciones(contrib.rename(columns={col_ref: col_ref}))
@@ -226,7 +226,7 @@ with tab_fin:
         else:
             st.plotly_chart(
                 charts.rubros_variacion(rub_i, col_ref, "MXN millones"),
-                use_container_width=True, key="ch_rubros_ingreso")
+                width="stretch", key="ch_rubros_ingreso")
     with col_g:
         st.markdown(f"**Gastos por rubro — desviación vs {referencia.lower()}**")
         rub_g = metrics.pl_rubros(modelo, "gasto", ALC, UNI)
@@ -235,7 +235,7 @@ with tab_fin:
         else:
             st.plotly_chart(
                 charts.rubros_variacion(rub_g, col_ref, "MXN millones"),
-                use_container_width=True, key="ch_rubros_gasto")
+                width="stretch", key="ch_rubros_gasto")
 
     with st.expander("Ver tabla de rubros"):
         for etiqueta, datos in (("Ingresos netos", rub_i), ("Gastos de operación", rub_g)):
@@ -290,7 +290,7 @@ with tab_op:
             if not serie.empty:
                 st.plotly_chart(
                     charts.serie_mensual(serie, etiqueta, unidad_txt.capitalize()),
-                    use_container_width=True, key=f"ch_serie_{tipo}")
+                    width="stretch", key=f"ch_serie_{tipo}")
         with c2:
             vista = comp.reset_index()[["plaza", "actual", "anterior", "var_pct"]]
             vista.columns = ["Plaza", f"{modelo.anio}", f"{modelo.anio - 1}", "% vs AA"]
@@ -325,14 +325,14 @@ with tab_op:
                 charts.barras_por_plaza(validos.reset_index(), "ingreso_por_visita",
                                         "MXN por visita", en_millones=False,
                                         formato="$%{y:,.2f}"),
-                use_container_width=True, key="ch_ingreso_visita")
+                width="stretch", key="ch_ingreso_visita")
         with c2:
             st.markdown("**Ingreso por visita vs gasto por visita**")
             st.plotly_chart(
                 charts.dispersion_benchmark(
                     validos.reset_index(), "gasto_por_visita", "ingreso_por_visita",
                     "plaza", "Gasto por visita (MXN)", "Ingreso por visita (MXN)"),
-                use_container_width=True, key="ch_dispersion")
+                width="stretch", key="ch_dispersion")
 
         vista = validos.reset_index()[["plaza", "afluencia", "aforo",
                                        "ingreso_por_visita", "gasto_por_visita",
@@ -390,13 +390,13 @@ with tab_ocup:
                     ocup_df.reset_index(), "ocupacion_pct",
                     config.UMBRALES["ocupacion_objetivo"], "% de GLA arrendado",
                     f"Objetivo {config.UMBRALES['ocupacion_objetivo']:.0%}"),
-                use_container_width=True, key="ch_ocupacion")
+                width="stretch", key="ch_ocupacion")
         with c2:
             st.markdown("**Dónde cuesta el espacio vacío — renta mensual no colocada**")
             riesgo = ocup_df.reset_index()[["plaza", "renta_en_riesgo"]].dropna()
             st.plotly_chart(
                 charts.barras_por_plaza(riesgo, "renta_en_riesgo", "MXN millones"),
-                use_container_width=True, key="ch_renta_riesgo")
+                width="stretch", key="ch_renta_riesgo")
 
         peor_pct = ocup_df.nsmallest(1, "ocupacion_pct").iloc[0]
         peor_riesgo = ocup_df.nlargest(1, "renta_en_riesgo").iloc[0]
@@ -421,7 +421,7 @@ with tab_ocup:
                 charts.barras_por_plaza(ocup_df.reset_index(), "uaiida_por_m2",
                                         "MXN por m²", en_millones=False,
                                         formato="$%{y:,.0f} / m²"),
-                use_container_width=True, key="ch_uaiida_m2")
+                width="stretch", key="ch_uaiida_m2")
         with c2:
             st.markdown("**Ocupación frente a rendimiento por m²**")
             disp = ocup_df.reset_index().copy()
@@ -430,7 +430,7 @@ with tab_ocup:
                 charts.dispersion_benchmark(
                     disp, "ocupacion_pct", "uaiida_por_m2", "plaza",
                     "Ocupación (%)", "UAIIDA por m² (MXN)"),
-                use_container_width=True, key="ch_ocup_vs_rend")
+                width="stretch", key="ch_ocup_vs_rend")
 
         layout.titulo_seccion("Detalle de superficie por plaza")
         vista = ocup_df.reset_index()[[
@@ -477,14 +477,14 @@ with tab_car:
         with c1:
             st.markdown("**Evolución mensual del saldo de cartera del portafolio filtrado**")
             st.plotly_chart(charts.cascada_cartera(metrics.serie_cartera(modelo, UNI)),
-                            use_container_width=True, key="ch_cartera_serie")
+                            width="stretch", key="ch_cartera_serie")
         with c2:
             st.markdown("**Días cartera por plaza — contra el objetivo institucional**")
             dc_plaza = car.reset_index()[["plaza", "dias_cartera"]].dropna()
             st.plotly_chart(
                 charts.barras_por_plaza(dc_plaza, "dias_cartera", "Días",
                                         en_millones=False, formato="%{y:,.1f} días"),
-                use_container_width=True, key="ch_dias_cartera")
+                width="stretch", key="ch_dias_cartera")
 
         layout.titulo_seccion("Saldo y antigüedad por plaza")
         vista = car.reset_index()[["plaza", "ciudad", "saldo", "saldo_prev",
@@ -624,7 +624,7 @@ with tab_plaza:
                     continue
                 st.markdown(f"**{etiqueta} mensual — {elegida}**")
                 st.plotly_chart(charts.serie_mensual(serie, etiqueta, unidad_txt),
-                                use_container_width=True, key=f"ch_plaza_{tipo}")
+                                width="stretch", key=f"ch_plaza_{tipo}")
 
     layout.titulo_seccion("Mayores deudores de la plaza")
     top_u = metrics.cartera_top_clientes(modelo, solo, 10)
@@ -655,7 +655,7 @@ with tab_datos:
             "aparece en <i>Última actualización de datos</i>.")
 
     layout.titulo_seccion("Fuentes detectadas")
-    st.dataframe(data_loader.source_inventory(), use_container_width=True, hide_index=True)
+    st.dataframe(data_loader.source_inventory(), width="stretch", hide_index=True)
     st.caption(
         "Los archivos se resuelven por patrón y se leen en modo lectura; nunca se "
         "modifican. Para actualizar el tablero basta con reemplazarlos en `data/raw/` "
@@ -697,7 +697,7 @@ with tab_datos:
             "y el porcentaje. El mes puede seguir formando parte del nombre del "
             "archivo (`OCUP_JUN26.xlsx`)."
         )
-        st.dataframe(modelo.ocupacion, use_container_width=True, hide_index=True)
+        st.dataframe(modelo.ocupacion, width="stretch", hide_index=True)
 
     layout.titulo_seccion("Modelo normalizado")
     st.caption(
@@ -714,7 +714,7 @@ with tab_datos:
     }
     elegido = st.selectbox("Tabla", list(conjuntos.keys()), key="sel_modelo")
     datos = conjuntos[elegido]
-    st.dataframe(datos.head(300), use_container_width=True, hide_index=True)
+    st.dataframe(datos.head(300), width="stretch", hide_index=True)
     st.caption(f"{len(datos):,} registros · mostrando los primeros 300.")
     tables.descargar_csv(datos, f"{elegido.lower().replace(' ', '_')}.csv",
                          "Descargar tabla completa", key="dl_modelo")
