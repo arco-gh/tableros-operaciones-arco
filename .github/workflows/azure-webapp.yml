@@ -1,0 +1,70 @@
+name: Desplegar tablero en Azure App Service
+
+# Se despliega al integrar a main, o manualmente desde la pestaña Actions.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Necesario para la autenticación federada (OIDC) con Azure.
+# Sin credenciales almacenadas: no hay contraseña que se pueda filtrar.
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  APP_NAME: arco-tablero-operaciones
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obtener el código
+        uses: actions/checkout@v4
+
+      # Sólo se empaqueta el código fuente. Las dependencias las instala Azure
+      # en el servidor gracias a SCM_DO_BUILD_DURING_DEPLOYMENT=true, de modo
+      # que se compilan contra el mismo Python que las va a ejecutar.
+      #
+      # Los Excel nunca viajan aquí: contienen estados de resultados por plaza
+      # y el detalle de deudores con nombre y saldo.
+      - name: Empaquetar el proyecto
+        run: |
+          zip -r tablero.zip . \
+            -x "data/*" \
+               ".venv/*" \
+               ".git/*" \
+               ".github/*" \
+               "*.pyc" \
+               "__pycache__/*" \
+               "tablero.zip"
+
+      - name: Iniciar sesión en Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Desplegar en App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.APP_NAME }}
+          package: tablero.zip
+
+      # Comprobación posterior: si el tablero no levanta, el flujo falla y
+      # queda constancia, en lugar de dar el despliegue por bueno.
+      - name: Verificar que el tablero responde
+        run: |
+          sleep 60
+          for intento in 1 2 3 4 5; do
+            if curl -fsS "https://${APP_NAME}.azurewebsites.net/_stcore/health"; then
+              echo "El tablero responde correctamente."
+              exit 0
+            fi
+            echo "Intento $intento sin respuesta; reintentando en 30 s..."
+            sleep 30
+          done
+          echo "El tablero no respondió tras el despliegue. Revise el flujo de registro."
+          exit 1
