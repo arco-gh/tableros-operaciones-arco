@@ -16,7 +16,7 @@ def descargar_csv(df: pd.DataFrame, nombre: str, etiqueta: str = "Descargar CSV"
         file_name=nombre,
         mime="text/csv",
         key=key,
-        use_container_width=False,
+        width="content",
     )
 
 
@@ -39,7 +39,7 @@ def tabla_comparativa(df: pd.DataFrame, columnas_moneda: list[str],
             conf[c] = st.column_config.NumberColumn(c, format="%,.0f")
 
     extra = {"height": altura} if altura else {}
-    st.dataframe(df, use_container_width=True, hide_index=True,
+    st.dataframe(df, width="stretch", hide_index=True,
                  column_config=conf, **extra)
 
 
