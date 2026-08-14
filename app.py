@@ -129,8 +129,8 @@ with tab_resumen:
     conteo = alerts.conteo_por_severidad(tabla_alertas)
     cols = st.columns(4)
     for col, sev in zip(cols, config.SEVERIDADES):
-        col.markdown(kpi_cards.create_kpi_card(
-            config.SEVERIDAD_LABEL[sev], str(conteo[sev])), unsafe_allow_html=True)
+        col.html(kpi_cards.create_kpi_card(
+            config.SEVERIDAD_LABEL[sev], str(conteo[sev])))
     st.write("")
     kpi_cards.bloque_alertas(tabla_alertas, maximo=8)
     if len(tabla_alertas) > 8:
@@ -204,7 +204,7 @@ with tab_fin:
 
     c1, c2 = st.columns([1, 1.15])
     with c1:
-        st.markdown(
+        st.html(
             f"**{concepto} — desviación total: "
             f"{metrics.format_millions(total_desv)} vs {referencia.lower()}**")
         st.plotly_chart(charts.contribucion_desviacion(contrib),
@@ -280,7 +280,7 @@ with tab_op:
             continue
 
         total_var = metrics.calculate_yoy(comp["actual"].sum(), comp["anterior"].sum())
-        st.markdown(
+        st.html(
             f"**{etiqueta} — {metrics.format_number(comp['actual'].sum())} {unidad_txt}, "
             f"{metrics.format_variation(total_var)} vs año anterior**")
 
@@ -535,11 +535,11 @@ with tab_plaza:
     var_i = k_u["ingresos"]["var_ly"]
     var_u = k_u["uaiida"]["var_ly"]
     estatus, tono = analytics.estatus_unidad(var_i, var_u)
-    st.markdown(
-        f"### {elegida} &nbsp; {layout.pill(estatus, tono)}"
-        f"<div style='color:#53626d;font-size:14px;margin-top:2px;'>"
-        f"{config.UNIDADES[unidad]['ciudad']} · {PERIODO}</div>",
-        unsafe_allow_html=True)
+    st.html(
+        f"<h3 style='margin:0 0 2px;'>{elegida} &nbsp; "
+        f"{layout.pill(estatus, tono)}</h3>"
+        f"<div style='color:#53626d;font-size:14px;'>"
+        f"{config.UNIDADES[unidad]['ciudad']} · {PERIODO}</div>")
     st.write("")
 
     kpi_cards.rejilla_kpis(kpi_cards.tarjetas_financieras(k_u, "ly"), 4)
@@ -641,12 +641,12 @@ with tab_plaza:
 with tab_datos:
     layout.titulo_seccion("Ambiente")
     c1, c2 = st.columns([1, 2])
-    c1.markdown(kpi_cards.create_kpi_card(
+    c1.html(kpi_cards.create_kpi_card(
         "Ambiente", config.ENTORNO or "Sin etiquetar",
-        "Definido por la variable ARCO_ENTORNO"), unsafe_allow_html=True)
-    c2.markdown(kpi_cards.create_kpi_card(
+        "Definido por la variable ARCO_ENTORNO"))
+    c2.html(kpi_cards.create_kpi_card(
         "Carpeta de datos", str(config.DATA_RAW),
-        "Definida por la variable ARCO_DATA_DIR"), unsafe_allow_html=True)
+        "Definida por la variable ARCO_DATA_DIR"))
     if not config.entorno_es_oficial():
         layout.nota(
             f"Este es el ambiente <b>{config.ENTORNO}</b>. Sus cifras pueden no "
@@ -664,16 +664,16 @@ with tab_datos:
 
     layout.titulo_seccion("Periodo y cobertura")
     c1, c2, c3 = st.columns(3)
-    c1.markdown(kpi_cards.create_kpi_card(
+    c1.html(kpi_cards.create_kpi_card(
         "Última actualización de datos", modelo.periodo_label,
-        "Determinada por el periodo máximo del libro financiero"), unsafe_allow_html=True)
-    c2.markdown(kpi_cards.create_kpi_card(
+        "Determinada por el periodo máximo del libro financiero"))
+    c2.html(kpi_cards.create_kpi_card(
         "Unidades con datos", str(len(modelo.unidades_activas)),
-        f"de {len(config.ORDEN_UNIDADES)} en el catálogo"), unsafe_allow_html=True)
-    c3.markdown(kpi_cards.create_kpi_card(
+        f"de {len(config.ORDEN_UNIDADES)} en el catálogo"))
+    c3.html(kpi_cards.create_kpi_card(
         "Años de historia de tráfico",
         f"{int(modelo.trafico['anio'].min())}–{int(modelo.trafico['anio'].max())}",
-        "Afluencia y aforo mensual"), unsafe_allow_html=True)
+        "Afluencia y aforo mensual"))
 
     layout.titulo_seccion("Supuestos y limitaciones")
     for s in modelo.supuestos:
@@ -681,7 +681,7 @@ with tab_datos:
 
     layout.titulo_seccion("Ocupación y GLA")
     if modelo.ocupacion.empty:
-        st.markdown(
+        st.html(
             "No se detectó el archivo de ocupación. Coloque en `data/raw/` un archivo "
             "cuyo nombre empiece con `OCUP` y que contenga, en una misma hoja, una "
             "columna encabezada **PLAZA** con la clave de la unidad, una columna "
@@ -689,7 +689,7 @@ with tab_datos:
             "El tablero localiza los encabezados por nombre, no por posición."
         )
     else:
-        st.markdown(
+        st.html(
             "El archivo de ocupación se lee localizando los encabezados **PLAZA**, "
             "**GLA** y **%**. Las columnas de superficie arrendada y disponible vienen "
             "sin título en el origen, así que se identifican verificando cuál "
