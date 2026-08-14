@@ -20,6 +20,11 @@ def cargar_estilos() -> None:
     """
     Inyecta la hoja de estilos institucional.
 
+    Se usa `st.html` y no `st.markdown`: este último procesa el contenido como
+    Markdown, donde una línea en blanco cierra el bloque HTML. Con una hoja de
+    estilos que separa secciones con líneas vacías, todo lo posterior a la
+    primera se imprimiría como texto en la página en lugar de aplicarse.
+
     Si el archivo no llegó al servidor —caso frecuente cuando el proyecto se
     sube por arrastre en el navegador— el tablero funciona pero se ve sin
     formato. Se avisa de forma explícita en lugar de fallar en silencio.
@@ -35,11 +40,10 @@ def cargar_estilos() -> None:
     else:
         css = ruta.read_text(encoding="utf-8")
 
-    st.markdown(
+    st.html(
         "<link href='https://fonts.googleapis.com/css2?"
         "family=Barlow:wght@400;500;600;700;800&display=swap' rel='stylesheet'>"
-        f"<style>{css}</style>",
-        unsafe_allow_html=True,
+        f"<style>{css}</style>"
     )
 
 
@@ -78,7 +82,7 @@ def encabezado(modelo, kpis_mes: dict, kpis_acum: dict, alcance: str) -> None:
         clase = "env-chip" if config.entorno_es_oficial() else "env-chip alerta"
         chip = f"<span class='{clase}'>{config.ENTORNO}</span>"
 
-    st.markdown(
+    st.html(
         f"""
         <div class="arco-header">
           <div>
@@ -90,16 +94,15 @@ def encabezado(modelo, kpis_mes: dict, kpis_acum: dict, alcance: str) -> None:
           <div class="badges">{badges}</div>
         </div>
         """,
-        unsafe_allow_html=True,
     )
 
 
 def titulo_seccion(texto: str) -> None:
-    st.markdown(f"<div class='arco-section'>{texto}</div>", unsafe_allow_html=True)
+    st.html(f"<div class='arco-section'>{texto}</div>")
 
 
 def nota(texto: str) -> None:
-    st.markdown(f"<div class='note-box'>{texto}</div>", unsafe_allow_html=True)
+    st.html(f"<div class='note-box'>{texto}</div>")
 
 
 def pill(texto: str, tono: str) -> str:
