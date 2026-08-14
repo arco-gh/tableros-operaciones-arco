@@ -43,9 +43,9 @@ jobs:
       - name: Iniciar sesión en Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_06CBCDE4C93C4D09B494010768DE326E }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_56D0C83BE2EC459CA0275733F42C5AE2 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F558664321A245DEBAEA445DB95A0AB0 }}
 
       - name: Desplegar en App Service
         uses: azure/webapps-deploy@v3
