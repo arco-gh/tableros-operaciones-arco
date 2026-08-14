@@ -17,8 +17,24 @@ def configurar_pagina() -> None:
 
 
 def cargar_estilos() -> None:
+    """
+    Inyecta la hoja de estilos institucional.
+
+    Si el archivo no llegó al servidor —caso frecuente cuando el proyecto se
+    sube por arrastre en el navegador— el tablero funciona pero se ve sin
+    formato. Se avisa de forma explícita en lugar de fallar en silencio.
+    """
     ruta = config.ASSETS / "styles.css"
-    css = ruta.read_text(encoding="utf-8") if ruta.exists() else ""
+    if not ruta.exists():
+        st.warning(
+            f"No se encontró la hoja de estilos en `{ruta}`. El tablero funciona, "
+            "pero se muestra sin formato institucional. Verifique que la carpeta "
+            "`assets/` se haya desplegado completa."
+        )
+        css = ""
+    else:
+        css = ruta.read_text(encoding="utf-8")
+
     st.markdown(
         "<link href='https://fonts.googleapis.com/css2?"
         "family=Barlow:wght@400;500;600;700;800&display=swap' rel='stylesheet'>"
