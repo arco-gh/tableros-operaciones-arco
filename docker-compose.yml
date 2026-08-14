@@ -1,0 +1,19 @@
+# Despliegue de un solo comando: docker compose up -d
+#
+# Los archivos fuente se montan desde el host, de modo que reemplazarlos cada
+# mes no requiere reconstruir la imagen ni reiniciar el contenedor.
+
+services:
+  tablero:
+    build: .
+    image: arco/tablero-ejecutivo:latest
+    container_name: arco-tablero
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    volumes:
+      # Ruta del host (o del recurso compartido de red) : ruta dentro del contenedor.
+      # Sólo lectura: el tablero nunca modifica los archivos originales.
+      - ./data/raw:/data/raw:ro
+    environment:
+      ARCO_DATA_DIR: /data/raw

@@ -1,0 +1,122 @@
+/* Identidad ARCO — ejecutiva, institucional, sin ornamento.
+   Los tokens replican la paleta del reporte impreso del Comité. */
+
+:root{
+  --azul-1:#4a7c9e;
+  --azul-2:#384c5f;
+  --mensual:#7ccad3;
+  --verde:#4f9887;
+  --ambar:#c88d52;
+  --rojo:#aa1922;
+  --ink-900:#20303d;
+  --ink-600:#53626d;
+  --ink-400:#8a97a1;
+  --paper:#f4f6f8;
+  --card:#ffffff;
+  --line:#e2e7ec;
+}
+
+html, body, [class*="css"]{
+  font-family:'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.block-container{ padding-top:1.6rem; padding-bottom:3rem; max-width:1720px; }
+
+/* ------------------------------------------------------------ encabezado */
+.arco-header{
+  background:linear-gradient(120deg,var(--azul-2) 0%,var(--azul-1) 78%);
+  border-radius:14px; padding:22px 28px; color:#fff;
+  display:flex; justify-content:space-between; align-items:center;
+  gap:20px; flex-wrap:wrap; margin-bottom:18px;
+}
+.arco-header .eyebrow{
+  font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  color:#cfe3ea; font-weight:600; margin-bottom:4px;
+}
+.arco-header h1{ font-size:25px; font-weight:800; letter-spacing:-.01em; margin:0; }
+.arco-header .period{ font-size:14px; color:#dcecef; margin-top:4px; font-weight:500; }
+.arco-header .badges{ display:flex; gap:10px; flex-wrap:wrap; }
+.env-chip{
+  display:inline-block; margin-left:8px; padding:2px 10px; border-radius:999px;
+  font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); color:#fff;
+}
+.env-chip.alerta{ background:#c88d52; border-color:#e0b183; color:#20303d; }
+.arco-badge{
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28);
+  border-radius:8px; padding:8px 15px; text-align:center; min-width:116px;
+}
+.arco-badge .lbl{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:#dbeef2; }
+.arco-badge .val{ font-size:18px; font-weight:800; margin-top:2px; }
+.arco-badge .val.pos{ color:#a9f0d6; }
+.arco-badge .val.neg{ color:#ffc2c2; }
+
+/* ---------------------------------------------------------- secciones */
+.arco-section{
+  font-size:14px; font-weight:800; color:var(--azul-2); text-transform:uppercase;
+  letter-spacing:.05em; margin:22px 0 10px; display:flex; align-items:center; gap:10px;
+}
+.arco-section::after{ content:""; flex:1; height:1px; background:var(--line); }
+
+/* -------------------------------------------------------------- tarjetas */
+.kpi-card{
+  background:var(--card); border:1px solid var(--line); border-radius:11px;
+  padding:13px 15px; height:100%;
+}
+.kpi-card .lbl{
+  font-size:11.5px; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--ink-400); font-weight:600;
+}
+.kpi-card .val{ font-size:23px; font-weight:800; color:var(--ink-900); margin-top:3px; line-height:1.15; }
+.kpi-card .ref{ font-size:12px; color:var(--ink-600); margin-top:5px; }
+.kpi-card .delta{ font-size:13px; font-weight:700; margin-top:3px; }
+.kpi-card .delta.pos{ color:var(--verde); }
+.kpi-card .delta.neg{ color:var(--rojo); }
+.kpi-card .delta.neu{ color:var(--ink-400); }
+
+/* --------------------------------------------------------------- pills */
+.pill{
+  display:inline-block; padding:3px 11px; border-radius:999px;
+  font-size:11.5px; font-weight:700; letter-spacing:.03em;
+}
+.pill-verde{ background:#e4f2ee; color:#2f6d5e; }
+.pill-ambar{ background:#faefe1; color:#8a5a20; }
+.pill-rojo{ background:#f7e3e4; color:#8d1119; }
+.pill-gris{ background:#eef1f4; color:#53626d; }
+
+/* -------------------------------------------------------------- alertas */
+.alert-row{
+  background:var(--card); border:1px solid var(--line); border-left-width:4px;
+  border-radius:9px; padding:10px 14px; margin-bottom:8px;
+}
+.alert-row.CRITICAL{ border-left-color:var(--rojo); }
+.alert-row.HIGH{ border-left-color:#c64b17; }
+.alert-row.MEDIUM{ border-left-color:var(--ambar); }
+.alert-row.LOW{ border-left-color:var(--ink-400); }
+.alert-row .meta{
+  font-size:11px; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--ink-400); font-weight:700;
+}
+.alert-row .msg{ font-size:14px; color:var(--ink-900); margin-top:2px; }
+
+/* ------------------------------------------------------------ hallazgos */
+.finding{
+  background:var(--card); border:1px solid var(--line); border-radius:10px;
+  padding:12px 15px; margin-bottom:8px; display:flex; gap:12px; align-items:flex-start;
+}
+.finding .rank{
+  font-size:12px; font-weight:800; color:#fff; background:var(--azul-2);
+  border-radius:6px; min-width:24px; height:24px; display:flex;
+  align-items:center; justify-content:center; flex:0 0 auto;
+}
+.finding.malo .rank{ background:var(--rojo); }
+.finding.bueno .rank{ background:var(--verde); }
+.finding .txt{ font-size:14.5px; color:var(--ink-900); line-height:1.45; }
+
+/* ------------------------------------------------------------ auxiliares */
+.note-box{
+  font-size:12.5px; color:var(--ink-600); background:#f8f9fc;
+  border:1px dashed #c7cede; border-radius:8px; padding:9px 13px; margin:6px 0 10px;
+}
+.stTabs [data-baseweb="tab"]{ font-weight:700; letter-spacing:.02em; }
+[data-testid="stMetricValue"]{ font-weight:800; }

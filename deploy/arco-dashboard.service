@@ -1,0 +1,34 @@
+# Servicio systemd para servidores Linux sin contenedores.
+# Instalar en /etc/systemd/system/arco-dashboard.service
+#
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now arco-dashboard
+#   sudo systemctl status arco-dashboard
+
+[Unit]
+Description=Tablero Ejecutivo ARCO (Streamlit)
+After=network.target
+
+[Service]
+Type=simple
+User=arco
+Group=arco
+WorkingDirectory=/opt/arco_dashboard
+Environment="ARCO_DATA_DIR=/srv/arco/data/raw"
+ExecStart=/opt/arco_dashboard/.venv/bin/streamlit run app.py \
+  --server.port=8501 \
+  --server.address=127.0.0.1 \
+  --server.headless=true \
+  --server.fileWatcherType=none
+Restart=always
+RestartSec=5
+
+# Endurecimiento básico
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/arco_dashboard/.streamlit
+
+[Install]
+WantedBy=multi-user.target
