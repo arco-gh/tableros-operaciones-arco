@@ -6,6 +6,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Un solo despliegue a la vez. Varios commits seguidos generarían ejecuciones
+# simultáneas que chocan al subir el paquete: App Service devuelve
+# "Conflict (CODE: 409)". Con esto, las intermedias se cancelan y sólo se
+# despliega la última, que es la que interesa.
+concurrency:
+  group: despliegue-${{ github.ref }}
+  cancel-in-progress: true
+
 # Necesario para la autenticación federada (OIDC) con Azure.
 # Sin credenciales almacenadas: no hay contraseña que se pueda filtrar.
 permissions:
@@ -13,7 +21,15 @@ permissions:
   contents: read
 
 env:
+  # Nombre del recurso App Service en Azure.
   APP_NAME: arco-tablero-operaciones
+
+  # AJUSTE OBLIGATORIO: dominio predeterminado del App Service.
+  # NO es siempre <APP_NAME>.azurewebsites.net. Desde 2024 Azure agrega un
+  # sufijo aleatorio para evitar que el subdominio quede reclamable si la
+  # aplicación se elimina. Cópielo tal cual de:
+  #   Portal > App Service > Información general > Dominio predeterminado
+  APP_HOST: arco-tablero-operaciones-effcbmfeaefrf5ds.southcentralus-01.azurewebsites.net
 
 jobs:
   desplegar:
@@ -40,12 +56,26 @@ jobs:
                "__pycache__/*" \
                "tablero.zip"
 
+      # ---------------------------------------------------------------
+      # AJUSTE OBLIGATORIO ANTES DEL PRIMER DESPLIEGUE
+      #
+      # Azure crea los secretos con un sufijo aleatorio, no con estos
+      # nombres genéricos. Consulte los nombres reales en el repositorio:
+      #   Settings > Secrets and variables > Actions
+      # y sustitúyalos abajo. Se ven así:
+      #   AZUREAPPSERVICE_CLIENTID_a1b2c3d4...
+      #   AZUREAPPSERVICE_TENANTID_a1b2c3d4...
+      #   AZUREAPPSERVICE_SUBSCRIPTIONID_a1b2c3d4...
+      # Los tres comparten el mismo sufijo.
+      #
+      # Si no se corrige, el paso falla con un error de credenciales vacías.
+      # ---------------------------------------------------------------
       - name: Iniciar sesión en Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_06CBCDE4C93C4D09B494010768DE326E }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_56D0C83BE2EC459CA0275733F42C5AE2 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F558664321A245DEBAEA445DB95A0AB0 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Desplegar en App Service
         uses: azure/webapps-deploy@v3
@@ -59,12 +89,14 @@ jobs:
         run: |
           sleep 60
           for intento in 1 2 3 4 5; do
-            if curl -fsS "https://${APP_NAME}.azurewebsites.net/_stcore/health"; then
+            if curl -fsS "https://${APP_HOST}/_stcore/health"; then
               echo "El tablero responde correctamente."
               exit 0
             fi
             echo "Intento $intento sin respuesta; reintentando en 30 s..."
             sleep 30
           done
-          echo "El tablero no respondió tras el despliegue. Revise el flujo de registro."
+          echo "El tablero no respondió tras el despliegue."
+          echo "Si el error es 'Could not resolve host', revise APP_HOST:"
+          echo "debe ser el dominio predeterminado real que muestra el portal."
           exit 1
